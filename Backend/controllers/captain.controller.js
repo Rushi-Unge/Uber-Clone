@@ -1,6 +1,6 @@
 const captainModel = require('../models/captain.model');
 const captainService = require('../services/captain.service');
-const { validationResult } = require('express-validation');
+const { validationResult } = require('express-validator');
 const blacklistTokenModel = require('../models/blackListToken.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -21,26 +21,27 @@ module.exports.registerCaptain = async (req, res, next) => {
     }
 
     // Hash the password
-    const hashedPassword = await captainModel.hashPassword(password);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new captain
-    const captain = await captainService.createCaptain({
-        fullname: {
+    try {
+        const captain = await captainService.createCaptain({
             firstname: fullname.firstname,
             lastname: fullname.lastname,
-        },
-        email,
-        password: hashedPassword,
-        vehicle: {
+            email,
+            password: hashedPassword,
             color: vehicle.color,
             plate: vehicle.plate,
             capacity: vehicle.capacity,
-        },
-    });
+            vehicleType: vehicle.vehicleType
+        });
 
-    // Generate auth token
-    const token = captain.generateAuthToken();
-    res.status(201).json({ token, captain });
+        // Generate auth token
+        const token = captain.generateAuthToken();
+        res.status(201).json({ token, captain });
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
 };
 
 // Login Captain
