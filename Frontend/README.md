@@ -12,5 +12,15 @@ Currently, two official plugins are available:
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 
+<!-- Animation -->
+npm i gsap
+npm i @gsap/react
+
 <!-- Packages -->
+# For Routing
 npm i react-router-dom
+# For Api Call
+npm i axios
+
+<!-- Icons -->
+npm install react-icons --save
